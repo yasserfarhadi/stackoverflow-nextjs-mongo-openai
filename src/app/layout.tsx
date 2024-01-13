@@ -1,16 +1,17 @@
-import React, { PropsWithChildren } from 'react';
+import { ClerkProvider } from '@clerk/nextjs';
+import React from 'react';
 import './globals.css';
-export const metadata = {
-  title: 'NextLevel Food',
-  description: 'Delicious meals, shared by a food-loving community.',
-};
 
-const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang='en'>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang='en'>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
-};
-
-export default RootLayout;
+}
