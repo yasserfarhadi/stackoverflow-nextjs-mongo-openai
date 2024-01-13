@@ -10,6 +10,7 @@
     "format": "prettier --ignore-path .git-ignore --write \"**/*.{js,jsx,ts,tsx,css,scss,md}\""
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.29.3",
     "better-sqlite3": "^9.2.2",
     "next": "14.0.4",
     "react": "^18",
