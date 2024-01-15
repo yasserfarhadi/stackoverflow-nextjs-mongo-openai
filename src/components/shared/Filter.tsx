@@ -8,7 +8,6 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select';
-import HomeFilters from '../home/HomeFilters';
 
 interface Props {
   filters: FilterType[];
@@ -39,7 +38,6 @@ const Filter: React.FC<Props> = ({ filters, className, containerClass }) => {
           </SelectContent>
         </Select>
       </div>
-      <HomeFilters />
     </>
   );
 };
