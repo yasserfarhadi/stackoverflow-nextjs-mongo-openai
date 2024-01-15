@@ -21,7 +21,14 @@ function setTheme(
 const ThemeContext = React.createContext<ThemeContextType | null>(null);
 
 const ThemeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [mode, setMode] = React.useState<ThemeContextType['mode']>('system');
+  const [mode, setMode] = React.useState<ThemeContextType['mode']>(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        (localStorage.getItem('theme') as ThemeContextType['mode']) || 'system'
+      );
+    }
+    return 'system';
+  });
 
   const handleThemeChange = React.useCallback(
     (selectedTheme: ThemeContextType['mode']) => {
