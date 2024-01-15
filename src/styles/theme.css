@@ -27,7 +27,7 @@
     @apply bg-light-800 dark:bg-dark-400;
   }
   .background-light800_dark300 {
-    @apply bg-light-800 dark:bg-dark-300!important;
+    @apply bg-light-800 dark:bg-dark-300 !important;
   }
   .text-dark100_light900 {
     @apply text-dark-100 dark:text-light-900 !important;
