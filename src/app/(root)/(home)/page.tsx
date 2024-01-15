@@ -1,9 +1,46 @@
+import QuestionCard from '@/components/cards/QuestionCard';
+import HomeFilters from '@/components/home/HomeFilters';
 import Filter from '@/components/shared/Filter';
+import NoResult from '@/components/shared/NoResult';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
 import Link from 'next/link';
 import React from 'react';
+
+const questions = [
+  {
+    _id: '1',
+    title: 'Redux Toolkit Not Updating State as Expected',
+    tags: [{ _id: '1', name: 'javascript' }],
+    author: {
+      _id: '1',
+      name: 'John Doe',
+      picture: 'john-doe.jpg',
+    },
+    views: 13330,
+    answers: [],
+    upvotes: 322330,
+    createdAt: new Date(),
+  },
+  {
+    _id: '2',
+    title: 'Async/Await Function Not Handling Errors Properly',
+    tags: [
+      { _id: '1', name: 'python' },
+      { _id: '2', name: 'sql' },
+    ],
+    author: {
+      _id: '1',
+      name: 'John Doe',
+      picture: 'john-doe.jpg',
+    },
+    views: 11111100,
+    answers: [],
+    upvotes: 320,
+    createdAt: new Date(),
+  },
+];
 
 export default function Home() {
   return (
@@ -16,19 +53,45 @@ export default function Home() {
           </Button>
         </Link>
       </div>
-      <div className='md: mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center md:flex-col md:items-start md:justify-stretch'>
+      <div className='md: mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center'>
         <LocalSearch
           route='/'
           iconPosition='left'
           imgSrc='/assets/icons/search.svg'
           placeholcer='Search for Questions'
-          className='flex-1 md:w-[100%]'
+          className='flex-1'
         />
         <Filter
           filters={HomePageFilters}
           className='min-h-[56px] sm:min-w-[170px]'
           containerClass='hidden max-md:flex'
         />
+      </div>
+      <HomeFilters />
+
+      <div className='mt-10 flex w-full flex-col gap-6'>
+        {questions.length > 0 ? (
+          questions.map((question) => (
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              author={question.author}
+              upvotes={question.upvotes}
+              views={question.views}
+              answers={question.answers}
+              createdAt={question.createdAt}
+            />
+          ))
+        ) : (
+          <NoResult
+            title='There is no question to show'
+            description='Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi veritatis, voluptas consectetur dolores magnam iste sunt nemo at quos quisquam?'
+            link='/ask-question'
+            linkTitle='Ask a Question'
+          />
+        )}
       </div>
     </>
   );
