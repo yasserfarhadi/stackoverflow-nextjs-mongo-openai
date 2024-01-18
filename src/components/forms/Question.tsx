@@ -20,9 +20,11 @@ import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
 
-function Question() {
-  // const editorRef = React.useRef(null);
+const type: any = 'create';
 
+function Question() {
+  const editorRef = React.useRef(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -33,8 +35,16 @@ function Question() {
   });
 
   function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    setIsSubmitting(true);
+    try {
+      // make an async call to API => create a question
+      // contain all form data
+      // navigate to home page
+    } catch (error) {
+      //
+    } finally {
+      //
+    }
     console.log(values);
   }
 
@@ -127,6 +137,9 @@ function Question() {
                       { value: 'Email', title: 'Email' },
                     ],
                   }}
+                  onInit={(_event, editor) => {
+                    editorRef.current = editor;
+                  }}
                   initialValue=''
                 />
               </FormControl>
@@ -183,7 +196,17 @@ function Question() {
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+        <Button
+          type='submit'
+          className='primary-gradient w-fit !text-light-900'
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === 'edit' ? 'Editing...' : 'Posting...'}</>
+          ) : (
+            <>{type === 'edit' ? 'Edit Question' : 'Ask a Question'}</>
+          )}
+        </Button>
       </form>
     </Form>
   );
