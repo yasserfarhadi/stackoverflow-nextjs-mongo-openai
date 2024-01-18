@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -17,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 
 function Question() {
+  const editorRef = React.useRef(null);
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -71,7 +74,25 @@ function Question() {
                 <span className='text-primary-500'>*</span>
               </FormLabel>
               <FormControl className='mt-3.5'>
-                {/* TODO: add an editor */}
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                  init={{
+                    height: 350,
+                    menubar: false,
+                    font_css: 'font-size: 16px',
+                    plugins:
+                      'ai tinycomments mentions anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+                    toolbar:
+                      'undo redo | codesample | blocks | bold italic underline strikethrough forecolor | align lineheight | checklist numlist bullist | emoticons charmap',
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: [
+                      { value: 'First.Name', title: 'First Name' },
+                      { value: 'Email', title: 'Email' },
+                    ],
+                  }}
+                  initialValue=''
+                />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
                 Introduce the problem and expand on what you put in the title
