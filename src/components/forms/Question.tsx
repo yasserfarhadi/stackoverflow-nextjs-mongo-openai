@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
+import { createQuestion } from '@/lib/actions/question.action';
 
 const type: any = 'create';
 
@@ -34,11 +35,14 @@ function Question() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
       // make an async call to API => create a question
       // contain all form data
+      console.log('submit');
+      await createQuestion({});
+
       // navigate to home page
     } catch (error) {
       //
@@ -122,6 +126,8 @@ function Question() {
               <FormControl className='mt-3.5'>
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                  obBlur={field.onBlur}
+                  onEditorChange={(content) => field.onChange(content)}
                   init={{
                     height: 350,
                     menubar: false,
