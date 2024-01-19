@@ -11,7 +11,9 @@ export const connectToDatabase = async () => {
 
   try {
     console.log('connecting...');
-    await mongoose.connect(process.env.MONGODB_URL);
+    await mongoose.connect(process.env.MONGODB_URL, {
+      dbName: 'bbk-flow',
+    });
     isConnected = true;
     console.log('Mongodb is connected');
   } catch (error) {
