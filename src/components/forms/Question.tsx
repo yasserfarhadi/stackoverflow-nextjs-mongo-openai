@@ -45,19 +45,17 @@ function Question({ mongoUserId }: Props) {
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
-      // make an async call to API => create a question
-      // contain all form data
       console.log('submit');
       await createQuestion({
         title: values.title,
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
+        path: '/',
       });
       router.push('/');
-      // navigate to home page
     } catch (error) {
-      //
+      console.log(error);
     } finally {
       //
     }
