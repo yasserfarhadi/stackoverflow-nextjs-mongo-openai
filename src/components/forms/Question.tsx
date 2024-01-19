@@ -20,10 +20,17 @@ import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
 import { createQuestion } from '@/lib/actions/question.action';
+import { useRouter, usePathname } from 'next/navigation';
 
 const type: any = 'create';
 
-function Question() {
+interface Props {
+  mongoUserId: string;
+}
+
+function Question({ mongoUserId }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
   const editorRef = React.useRef(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -41,8 +48,13 @@ function Question() {
       // make an async call to API => create a question
       // contain all form data
       console.log('submit');
-      await createQuestion({});
-
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+      });
+      router.push('/');
       // navigate to home page
     } catch (error) {
       //
