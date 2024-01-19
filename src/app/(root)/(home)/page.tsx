@@ -5,44 +5,13 @@ import NoResult from '@/components/shared/NoResult';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
+import { getQuestions } from '@/lib/actions/question.action';
 import Link from 'next/link';
 import React from 'react';
 
-const questions = [
-  {
-    _id: '1',
-    title: 'Redux Toolkit Not Updating State as Expected',
-    tags: [{ _id: '1', name: 'javascript' }],
-    author: {
-      _id: '1',
-      name: 'John Doe',
-      picture: 'john-doe.jpg',
-    },
-    views: 13330,
-    answers: [],
-    upvotes: 322330,
-    createdAt: new Date(),
-  },
-  {
-    _id: '2',
-    title: 'Async/Await Function Not Handling Errors Properly',
-    tags: [
-      { _id: '1', name: 'python' },
-      { _id: '2', name: 'sql' },
-    ],
-    author: {
-      _id: '1',
-      name: 'John Doe',
-      picture: 'john-doe.jpg',
-    },
-    views: 11111100,
-    answers: [],
-    upvotes: 320,
-    createdAt: new Date(),
-  },
-];
+export default async function Home() {
+  const { questions } = await getQuestions({});
 
-export default function Home() {
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
