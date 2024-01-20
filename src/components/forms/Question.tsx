@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Editor } from '@tinymce/tinymce-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ControllerRenderProps, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
 import { createQuestion } from '@/lib/actions/question.action';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const type: any = 'create';
 
@@ -30,8 +30,7 @@ interface Props {
 
 function Question({ mongoUserId }: Props) {
   const router = useRouter();
-  const pathname = usePathname();
-  const editorRef = React.useRef(null);
+  const editorRef = React.useRef<any | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -45,7 +44,6 @@ function Question({ mongoUserId }: Props) {
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
-      console.log('submit');
       await createQuestion({
         title: values.title,
         content: values.explanation,
@@ -59,12 +57,11 @@ function Question({ mongoUserId }: Props) {
     } finally {
       //
     }
-    console.log(values);
   }
 
   function handleInputKeyDown(
     event: React.KeyboardEvent<HTMLInputElement>,
-    field: ControllerRenderProps<typeof form, 'tags'>,
+    field: any,
   ) {
     if (event.key === 'Enter' && field.name === 'tags') {
       event.preventDefault();
@@ -88,11 +85,8 @@ function Question({ mongoUserId }: Props) {
     }
   }
 
-  function handleBadgeRemove(
-    tag: string,
-    field: ControllerRenderProps<typeof form>,
-  ) {
-    const newTags = field.value.filter((t) => t !== tag);
+  function handleBadgeRemove(tag: string, field: any) {
+    const newTags = field.value.filter((t: string) => t !== tag);
     form.setValue('tags', newTags);
   }
 
@@ -136,7 +130,7 @@ function Question({ mongoUserId }: Props) {
               <FormControl className='mt-3.5'>
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-                  obBlur={field.onBlur}
+                  onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
                     height: 350,

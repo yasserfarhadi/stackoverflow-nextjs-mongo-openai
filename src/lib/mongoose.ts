@@ -10,7 +10,6 @@ export const connectToDatabase = async () => {
   if (isConnected) return console.log('Mongodb is already connected.');
 
   try {
-    console.log('connecting...');
     await mongoose.connect(process.env.MONGODB_URL, {
       dbName: 'bbk-flow',
     });
