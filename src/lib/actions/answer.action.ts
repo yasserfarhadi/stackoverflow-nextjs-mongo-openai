@@ -16,13 +16,13 @@ export async function createAnswer(params: CreateAnswerParams) {
       author,
       question,
     });
+    await newAnswer.save();
 
     await Question.findByIdAndUpdate(question, {
       $push: { answers: newAnswer._id },
     });
 
     // TODO: Add interaction...
-
     revalidatePath(path);
   } catch (error: any) {
     console.log(error);

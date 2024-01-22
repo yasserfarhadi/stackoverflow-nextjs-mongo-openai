@@ -16,8 +16,16 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useTheme } from '@/context/ThemeProvider';
 import { Button } from '../ui/button';
 import Image from 'next/image';
+import { createAnswer } from '@/lib/actions/answer.action';
+import { usePathname } from 'next/navigation';
 
-const Answer = () => {
+interface Props {
+  questionId: string;
+  authorId: string;
+  question: string;
+}
+
+const Answer = ({ questionId, authorId, question }: Props) => {
   const { mode } = useTheme();
   const editorRef = React.useRef<any | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -27,8 +35,30 @@ const Answer = () => {
       answer: '',
     },
   });
+  const pathname = usePathname();
 
-  const handleCreateAnswer = (data) => {};
+  const handleCreateAnswer = async ({
+    answer,
+  }: z.infer<typeof AnswerSchema>) => {
+    setIsSubmitting(true);
+    try {
+      await createAnswer({
+        content: answer,
+        author: JSON.parse(authorId),
+        question: JSON.parse(questionId),
+        path: pathname,
+      });
+
+      form.reset();
+      if (editorRef.current) {
+        editorRef.current.setContent('');
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div>
       <div className='flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
