@@ -21,6 +21,7 @@ import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
 import { createQuestion } from '@/lib/actions/question.action';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/context/ThemeProvider';
 
 const type: any = 'create';
 
@@ -29,6 +30,7 @@ interface Props {
 }
 
 function Question({ mongoUserId }: Props) {
+  const { mode } = useTheme();
   const router = useRouter();
   const editorRef = React.useRef<any | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -129,23 +131,19 @@ function Question({ mongoUserId }: Props) {
               </FormLabel>
               <FormControl className='mt-3.5'>
                 <Editor
+                  key={mode}
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
                     height: 350,
                     menubar: false,
-                    font_css: 'font-size: 16px',
                     plugins:
                       'ai tinycomments mentions anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
                     toolbar:
                       'undo redo | codesample | blocks | bold italic underline strikethrough forecolor | align lineheight | checklist numlist bullist | emoticons charmap',
-                    tinycomments_mode: 'embedded',
-                    tinycomments_author: 'Author name',
-                    mergetags_list: [
-                      { value: 'First.Name', title: 'First Name' },
-                      { value: 'Email', title: 'Email' },
-                    ],
+                    skin: mode === 'dark' ? 'oxide-dark' : 'oxide',
+                    content_css: mode === 'dark' ? 'dark' : 'light',
                   }}
                   onInit={(_event, editor) => {
                     editorRef.current = editor;
