@@ -1,7 +1,10 @@
 import Answer from '@/components/forms/Answer';
+import AllAnswers from '@/components/shared/AllAnswers';
 import Metric from '@/components/shared/Metric';
 import ParseHTML from '@/components/shared/ParseHTML';
 import RenderTag from '@/components/shared/RenderTag';
+import Votes from '@/components/shared/Votes';
+import { getAnswers } from '@/lib/actions/answer.action';
 import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { formatAndDevideNumbers, getTimestamp } from '@/lib/utils';
@@ -15,6 +18,7 @@ const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
   const { userId: clerkId } = auth();
   const question = await getQuestionById({ questionId: params.id });
   if (!question) notFound();
+  const answersResult = await getAnswers({ questionId: question._id });
 
   let mongoUser;
   if (clerkId) {
@@ -40,7 +44,9 @@ const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
               {question.author.name}
             </p>
           </Link>
-          <div className='flex justify-end'>---VOTING FUNCTIONALITY---</div>
+          <div className='flex justify-end'>
+            <Votes />
+          </div>
         </div>
         <h2 className='h2-semibold text-dark200_light900 mt-3.5 w-full text-left'>
           {question.title}
@@ -80,6 +86,14 @@ const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
           />
         ))}
       </div>
+
+      <AllAnswers
+        questionId={question._id}
+        userId={JSON.stringify(mongoUser._id)}
+        totalAnswers={answersResult?.answers.length || 0}
+        answers={answersResult?.answers || []}
+      />
+
       <Answer
         question={question.content}
         questionId={JSON.stringify(question._id)}
