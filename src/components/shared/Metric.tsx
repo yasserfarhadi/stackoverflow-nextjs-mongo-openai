@@ -30,10 +30,10 @@ const Metric: React.FC<Props> = ({
         alt={alt}
         className={`object-contain ${href ? 'rounded-full' : ''}`}
       />
-      <p className='flex items-center gap-1'>
+      <p className='text-dark500_light700 flex items-center gap-1'>
         {value}{' '}
         <span
-          className={`small-regular line-clamp-1 ${isAuthor ? 'max-sm:hidden' : ''}`}
+          className={`small-regular text-dark500_light700 line-clamp-1 ${isAuthor ? 'max-sm:hidden' : ''}`}
         >
           {title}
         </span>

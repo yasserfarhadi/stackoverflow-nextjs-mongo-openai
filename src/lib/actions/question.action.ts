@@ -1,11 +1,16 @@
 'use server';
 
-import Question from '@/database/question.model';
+import Question, { IQuestion } from '@/database/question.model';
 import { connectToDatabase } from '../mongoose';
-import Tag from '@/database/tag.model';
-import type { GetQuestionsParams, CreateQuestionParams } from './shared.types';
-import User from '@/database/user.model';
+import Tag, { ITag } from '@/database/tag.model';
+import type {
+  GetQuestionsParams,
+  CreateQuestionParams,
+  GetQuestionByIdParams,
+} from './shared.types';
+import User, { IUser } from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
+import { notFound } from 'next/navigation';
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -59,4 +64,33 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     revalidatePath(path);
   } catch (error) {}
+}
+
+interface PopulatedQuestion extends Omit<IQuestion, 'tags' | 'author'> {
+  tags: Pick<ITag, '_id' | 'name'>[];
+  author: Pick<IUser, '_id' | 'clerkId' | 'name' | 'picture'>;
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    await connectToDatabase();
+    const { questionId } = params;
+    const question = (await Question.findById(questionId)
+      .populate({
+        path: 'tags',
+        model: Tag,
+        select: '_id name',
+      })
+      .populate({
+        path: 'author',
+        model: User,
+        select: '_id clerkId name picture',
+      })) as PopulatedQuestion;
+    if (!question) {
+      return notFound();
+    }
+    return question;
+  } catch (error: any) {
+    console.log(error);
+  }
 }
