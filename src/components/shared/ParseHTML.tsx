@@ -35,7 +35,7 @@ const ParseHTML = ({ data }: Props) => {
     Prism.highlightAll();
   }, []);
 
-  return <div>{parse(data)}</div>;
+  return <div className='[&>p]:break-all'>{parse(data)}</div>;
 };
 
 export default ParseHTML;

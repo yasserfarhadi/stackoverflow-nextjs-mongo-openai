@@ -51,8 +51,8 @@ const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
               userId={JSON.stringify(mongoUser._id)}
               upvotes={question.upvotes.length}
               downvotes={question.downvotes.length}
-              hasUpvoted={question.upvotes.includes(mongoUser._id)}
-              hasDownvoted={question.downvotes.includes(mongoUser._id)}
+              hasupVoted={question.upvotes.includes(mongoUser._id)}
+              hasdownVoted={question.downvotes.includes(mongoUser._id)}
               hasSaved={mongoUser.saved?.includes(question._id)}
             />
           </div>
