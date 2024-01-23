@@ -35,7 +35,7 @@ const AllAnswers = ({
         {answers.map((answer) => (
           <article key={answer._id} className='light-border border-b py-10'>
             <div className='flex items-center justify-between'>
-              <div className='mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
+              <div className='mb-8 flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
                 <Link
                   href={`/profile/${answer.author.clerkId}`}
                   className='flex flex-1 items-start gap-1 sm:items-center'
@@ -59,7 +59,15 @@ const AllAnswers = ({
                   </div>
                 </Link>
                 <div className='flex justify-end'>
-                  <Votes />
+                  <Votes
+                    type='answer'
+                    itemId={JSON.stringify(answer._id)}
+                    userId={userId}
+                    upvotes={answer.upvotes.length}
+                    downvotes={answer.downvotes.length}
+                    hasupVoted={answer.upvotes.includes(JSON.parse(userId))}
+                    hasdownVoted={answer.downvotes.includes(JSON.parse(userId))}
+                  />
                 </div>
               </div>
             </div>
