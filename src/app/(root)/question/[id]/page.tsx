@@ -25,6 +25,8 @@ const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
     mongoUser = await getUserById({ userId: clerkId });
   }
 
+  console.log(mongoUser);
+
   return (
     <>
       <div className='flex-start w-full flex-col'>
