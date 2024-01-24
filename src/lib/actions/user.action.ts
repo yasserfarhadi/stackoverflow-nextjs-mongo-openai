@@ -14,6 +14,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import Question from '@/database/question.model';
 import Tag from '@/database/tag.model';
+import Answer from '@/database/answer.model';
 
 export async function getUserById(params: GetUserByIdParams) {
   try {
@@ -153,6 +154,21 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
     const savedQuestions = user.saved;
     return { questions: savedQuestions };
   } catch (error: any) {
+    console.log(error);
+  }
+}
+export async function getUserInfo(params: GetUserByIdParams) {
+  try {
+    await connectToDatabase();
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) throw new Error('No use found.');
+
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+    return { user, totalAnswers, totalQuestions };
+  } catch (error) {
     console.log(error);
   }
 }
