@@ -8,9 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getJoinedDate } from '@/lib/utils';
 import ProfileLink from '@/components/shared/ProfileLink';
 import Stats from '@/components/shared/Stats';
+import { notFound } from 'next/navigation';
+import QuestionTab from '@/components/shared/QuestionTab';
+import AnswerTab from '@/components/shared/AnswerTab';
 
 const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
   const userInfo = await getUserInfo({ userId: id });
+  if (!userInfo) notFound();
   const { userId: clerkId } = auth();
   return (
     <>
@@ -68,7 +72,10 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
           </SignedIn>
         </div>
       </div>
-      <Stats />
+      <Stats
+        totalQuestions={userInfo?.totalQuestions}
+        totalAnswers={userInfo?.totalAnswers}
+      />
       <div className='mt-10 flex gap-10'>
         <Tabs defaultValue='top-posts' className='flex-1'>
           <TabsList className='background-light800_dark400 min-h-[46px] p-1'>
@@ -80,9 +87,11 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value='top-posts'>
-            Make changes to your account here.
+            <QuestionTab />
           </TabsContent>
-          <TabsContent value='answers'>Change your password here.</TabsContent>
+          <TabsContent value='answers'>
+            <AnswerTab />
+          </TabsContent>
         </Tabs>
       </div>
     </>
