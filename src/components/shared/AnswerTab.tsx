@@ -1,6 +1,12 @@
+import { SearchParamsProps } from '@/types';
 import React from 'react';
 
-const AnswerTab = () => {
+interface Props extends SearchParamsProps {
+  userId: string;
+  clerkId?: string | null;
+}
+
+const AnswerTab = ({ searchParams, userId, clerkId }: Props) => {
   return <div>AnswerTab</div>;
 };
 

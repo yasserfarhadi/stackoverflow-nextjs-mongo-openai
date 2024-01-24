@@ -11,8 +11,9 @@ import Stats from '@/components/shared/Stats';
 import { notFound } from 'next/navigation';
 import QuestionTab from '@/components/shared/QuestionTab';
 import AnswerTab from '@/components/shared/AnswerTab';
+import { URLProps } from '@/types';
 
-const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
+const ProfilePage = async ({ params: { id }, searchParams }: URLProps) => {
   const userInfo = await getUserInfo({ userId: id });
   if (!userInfo) notFound();
   const { userId: clerkId } = auth();
@@ -87,10 +88,18 @@ const ProfilePage = async ({ params: { id } }: { params: { id: string } }) => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value='top-posts'>
-            <QuestionTab />
+            <QuestionTab
+              searchParams={searchParams}
+              userId={userInfo.user._id}
+              clerkId={clerkId}
+            />
           </TabsContent>
           <TabsContent value='answers'>
-            <AnswerTab />
+            <AnswerTab
+              searchParams={searchParams}
+              userId={userInfo.user._id}
+              clerkId={clerkId}
+            />
           </TabsContent>
         </Tabs>
       </div>

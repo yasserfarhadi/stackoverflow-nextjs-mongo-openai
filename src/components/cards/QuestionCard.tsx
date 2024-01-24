@@ -6,6 +6,7 @@ import { formatAndDevideNumbers, getTimestamp } from '@/lib/utils';
 
 interface Props {
   _id: string;
+  clerkId?: string | null;
   title: string;
   tags: { _id: string; name: string }[];
   author: {
@@ -21,6 +22,7 @@ interface Props {
 
 const QuestionCard: React.FC<Props> = ({
   _id,
+  clerkId,
   title,
   tags,
   author,
