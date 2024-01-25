@@ -3,6 +3,8 @@ import Link from 'next/link';
 import React from 'react';
 import Metric from '../shared/Metric';
 import { IQuestion } from '@/database/question.model';
+import { SignedIn } from '@clerk/nextjs';
+import EditDeleteAction from '../shared/EditDeleteAction';
 
 interface Props {
   clerkId?: string | null;
@@ -26,6 +28,7 @@ const AnswerCard = ({
   upvotes,
   createdAt,
 }: Props) => {
+  const showAtionButtons = clerkId && clerkId === author.clerkId;
   return (
     <Link
       href={`/question/${question._id}/#${_id}`}
@@ -40,7 +43,13 @@ const AnswerCard = ({
             {question.title}
           </h3>
         </div>
-        {/* If signed in add edit delete actions */}
+        <SignedIn>
+          <div>
+            {showAtionButtons && (
+              <EditDeleteAction type='answer' itemId={JSON.stringify(_id)} />
+            )}
+          </div>
+        </SignedIn>
       </div>
       <div className='flex-between mt-6 w-full flex-wrap gap-3'>
         <Metric
