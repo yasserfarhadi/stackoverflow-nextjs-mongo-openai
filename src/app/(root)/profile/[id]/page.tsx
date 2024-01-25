@@ -94,7 +94,7 @@ const ProfilePage = async ({ params: { id }, searchParams }: URLProps) => {
               clerkId={clerkId}
             />
           </TabsContent>
-          <TabsContent value='answers'>
+          <TabsContent value='answers' className='flex w-full flex-col gap-6'>
             <AnswerTab
               searchParams={searchParams}
               userId={userInfo.user._id}

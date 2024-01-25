@@ -195,3 +195,23 @@ export async function getUserQuestions(params: GetUserStatsParams) {
     console.log(error);
   }
 }
+export async function getUserAnsewrs(params: GetUserStatsParams) {
+  try {
+    await connectToDatabase();
+    const { userId } = params;
+    const totalAnsewrs = await Answer.countDocuments({ author: userId });
+    const userAnsewrs = await Answer.find({ author: userId })
+      .sort({
+        upvotes: -1,
+      })
+      .populate('question', '_id title')
+      .populate('author', '_id clerkId name picture');
+
+    return {
+      totalAnsewrs,
+      answers: userAnsewrs,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
