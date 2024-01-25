@@ -13,7 +13,7 @@ import {
 import Question from '@/database/question.model';
 import User from '@/database/user.model';
 
-export async function GetTopInteractedTags(params: GetTopInteractedTagsParams) {
+export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   // try {
   //   // await connectToDatabase();
   //   // const { userId, limit = 3 } = params;
