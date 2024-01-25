@@ -9,6 +9,7 @@ import type {
   GetQuestionByIdParams,
   QuestionVoteParams,
   DeleteQuestionParams,
+  EditQuestionParams,
 } from './shared.types';
 import User, { IUser } from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
@@ -171,6 +172,24 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
       { questions: questionId },
       { $pull: { questions: questionId } },
     );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    await connectToDatabase();
+    const { questionId, title, content, path } = params;
+    const question = await Question.findById(questionId).populate('tags');
+    if (!question)
+      throw new Error(`there is no question with id: ${questionId} to delete.`);
+
+    question.title = title;
+    question.content = content;
+
+    await question.save();
 
     revalidatePath(path);
   } catch (error) {

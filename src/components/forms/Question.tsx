@@ -19,41 +19,57 @@ import {
 import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { Badge } from '@/components/ui/badge';
-import { createQuestion } from '@/lib/actions/question.action';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeProvider';
-
-const type: any = 'create';
+import { ITag } from '@/database/tag.model';
+import { createQuestion, editQuestion } from '@/lib/actions/question.action';
 
 interface Props {
   mongoUserId: string;
+  type?: 'create' | 'edit';
+  questionDetails?: string;
 }
 
-function Question({ mongoUserId }: Props) {
+function Question({ mongoUserId, type = 'create', questionDetails }: Props) {
   const { mode } = useTheme();
   const router = useRouter();
   const editorRef = React.useRef<any | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const parsedQuestionDetails = JSON.parse(questionDetails || '');
+  const groupedTags = parsedQuestionDetails.tags.map((tag: ITag) => tag.name);
+
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: '',
-      explanation: '',
-      tags: [],
+      title: parsedQuestionDetails.title || '',
+      explanation: parsedQuestionDetails.content || '',
+      tags: groupedTags || [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
     try {
-      await createQuestion({
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId),
-        path: '/',
-      });
-      router.push('/');
+      if (type === 'edit') {
+        await editQuestion({
+          questionId: parsedQuestionDetails._id,
+          title: values.title,
+          content: values.explanation,
+          path: `/question/${parsedQuestionDetails._id}`,
+        });
+
+        router.push(`/question/${parsedQuestionDetails._id}`);
+      } else if (type === 'create') {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: '/',
+        });
+        router.push('/');
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -148,7 +164,7 @@ function Question({ mongoUserId }: Props) {
                   onInit={(_event, editor) => {
                     editorRef.current = editor;
                   }}
-                  initialValue=''
+                  initialValue={parsedQuestionDetails.content || ''}
                 />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
@@ -173,6 +189,7 @@ function Question({ mongoUserId }: Props) {
                     className='no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border'
                     placeholder='Add tags...'
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
+                    disabled={type === 'edit'}
                   />
                   {field.value.length > 0 && (
                     <div className='flex-start mt-2.5 gap-2.5'>
@@ -182,14 +199,16 @@ function Question({ mongoUserId }: Props) {
                           className='subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize'
                         >
                           {tag}
-                          <Image
-                            src='/assets/icons/close.svg'
-                            alt='Close icon'
-                            width={12}
-                            height={12}
-                            className='cursor-pointer object-contain invert-0 dark:invert'
-                            onClick={() => handleBadgeRemove(tag, field)}
-                          />
+                          {type === 'create' && (
+                            <Image
+                              src='/assets/icons/close.svg'
+                              alt='Close icon'
+                              width={12}
+                              height={12}
+                              className='cursor-pointer object-contain invert-0 dark:invert'
+                              onClick={() => handleBadgeRemove(tag, field)}
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>
