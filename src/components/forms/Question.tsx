@@ -36,8 +36,8 @@ function Question({ mongoUserId, type = 'create', questionDetails }: Props) {
   const editorRef = React.useRef<any | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const parsedQuestionDetails = JSON.parse(questionDetails || '');
-  const groupedTags = parsedQuestionDetails.tags.map((tag: ITag) => tag.name);
+  const parsedQuestionDetails = JSON.parse(questionDetails || '{}');
+  const groupedTags = parsedQuestionDetails?.tags?.map((tag: ITag) => tag.name);
 
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
