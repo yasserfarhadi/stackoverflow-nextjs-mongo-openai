@@ -8,10 +8,13 @@ import type {
   CreateQuestionParams,
   GetQuestionByIdParams,
   QuestionVoteParams,
+  DeleteQuestionParams,
 } from './shared.types';
 import User, { IUser } from '@/database/user.model';
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
+import Answer from '@/database/answer.model';
+import Interaction from '@/database/interaction.model';
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -151,6 +154,26 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
 
     revalidatePath(path);
   } catch (error: any) {
+    console.log(error);
+  }
+}
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    await connectToDatabase();
+    const { questionId, path } = params;
+    const question = await Question.findByIdAndDelete(questionId);
+    if (!question)
+      throw new Error(`there is no question with id: ${questionId} to delete.`);
+    await Answer.deleteMany({ question: questionId });
+    await Interaction.deleteMany({ question: questionId });
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } },
+    );
+
+    revalidatePath(path);
+  } catch (error) {
     console.log(error);
   }
 }
