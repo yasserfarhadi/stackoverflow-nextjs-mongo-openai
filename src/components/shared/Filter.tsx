@@ -1,3 +1,5 @@
+'use client';
+
 import type { Filter as FilterType } from '@/types';
 import React from 'react';
 import {
@@ -8,6 +10,8 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select';
+import { formUrlQuery } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
   filters: FilterType[];
@@ -16,10 +20,30 @@ interface Props {
 }
 
 const Filter: React.FC<Props> = ({ filters, className, containerClass }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const filterQuery = searchParams.get('filter');
+
+  const handleUpdateFilter = React.useCallback(
+    (value: string) => {
+      const newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: 'filter',
+        value,
+      });
+
+      router.push(newUrl, { scroll: false });
+    },
+    [router, searchParams],
+  );
+
   return (
     <>
       <div className={`relative ${containerClass}`}>
-        <Select>
+        <Select
+          onValueChange={handleUpdateFilter}
+          defaultValue={filterQuery || undefined}
+        >
           <SelectTrigger
             className={`${className}  body-regular light-border background-light800_dark300 text-dark500_light700 border px-5 py-2.5`}
           >

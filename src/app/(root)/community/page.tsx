@@ -7,8 +7,10 @@ import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-const CommunityPage = async ({ searchParams: { q } }: SearchParamsProps) => {
-  const results = await getAllUsers({ searchQuery: q });
+const CommunityPage = async ({
+  searchParams: { q, filter },
+}: SearchParamsProps) => {
+  const results = await getAllUsers({ searchQuery: q, filter });
 
   return (
     <>
