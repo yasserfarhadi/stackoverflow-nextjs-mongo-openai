@@ -2,48 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import RenderTag from './RenderTag';
+import { getHotQuestions } from '@/lib/actions/question.action';
+import { getTopPopularTags } from '@/lib/actions/tag.action';
 
-const hotQuestions = [
-  {
-    _id: '1',
-    title:
-      'Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?',
-  },
-  { _id: '2', title: 'Is it only me or the font is bolder than necessary?' },
-  { _id: '3', title: 'Can I get the course for free?' },
-  { _id: '4', title: 'Redux Toolkit Not Updating State as Expected' },
-  { _id: '5', title: 'Async/Await Function Not Handling Errors Properly' },
-];
+const RightSidebar = async () => {
+  const hotQuestions = (await getHotQuestions()) || [];
+  const tags = (await getTopPopularTags()) || [];
+  console.log(tags);
 
-const tags = [
-  {
-    _id: '1',
-    name: 'Javascript',
-    totalQuestions: 5,
-  },
-  {
-    _id: '2',
-    name: 'Typescript',
-    totalQuestions: 4,
-  },
-  {
-    _id: '3',
-    name: 'Nextjs',
-    totalQuestions: 3,
-  },
-  {
-    _id: '4',
-    name: 'React',
-    totalQuestions: 2,
-  },
-  {
-    _id: '5',
-    name: 'Tailwind',
-    totalQuestions: 1,
-  },
-];
-
-const RightSidebar = () => {
   return (
     <section className='background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 max-xl:hidden dark:shadow-none'>
       <div>
@@ -52,7 +18,7 @@ const RightSidebar = () => {
           {hotQuestions.map((question) => (
             <Link
               key={question._id}
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`}
               className='flex cursor-pointer items-center justify-between gap-7'
             >
               <p className='body-medium text-dark500_light700'>
@@ -77,7 +43,7 @@ const RightSidebar = () => {
               key={tag._id}
               _id={tag._id}
               name={tag.name}
-              totalQuestions={tag.totalQuestions}
+              totalQuestions={tag.numberOfQuestions}
               showCount
             />
           ))}
