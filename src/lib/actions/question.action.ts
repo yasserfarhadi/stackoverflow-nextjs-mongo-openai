@@ -22,7 +22,7 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     await connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     const query: FilterQuery<typeof Question> = {};
 
@@ -37,10 +37,26 @@ export async function getQuestions(params: GetQuestionsParams) {
       ];
     }
 
+    let sortOptions = {};
+    switch (filter) {
+      case 'newest':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'frequent':
+        sortOptions = { views: -1 };
+        break;
+      case 'unanswered':
+        query.answers = { $size: 0 };
+        break;
+
+      default:
+        break;
+    }
+
     const questions = await Question.find(query)
       .populate({ path: 'tags', model: Tag })
       .populate({ path: 'author', model: User })
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
     return { questions };
   } catch (error: any) {
     console.log(error);
@@ -214,33 +230,33 @@ export async function editQuestion(params: EditQuestionParams) {
   }
 }
 
-export async function getHotQuestions() {
-  try {
-    await connectToDatabase();
-    const hotQuestions = await Question.aggregate([
-      {
-        $project: {
-          title: 1,
-          views: 1,
-          numberOfUpvotes: { $size: '$upvotes' },
-        },
-      },
-      { $sort: { numberOfUpvotes: -1, views: -1 } },
-      { $limit: 5 },
-    ]);
-    return hotQuestions;
-  } catch (error) {
-    console.log(error);
-  }
-}
 // export async function getHotQuestions() {
 //   try {
 //     await connectToDatabase();
-//     const hotQuestions = await Question.find({})
-//       .sort({ views: -1, upvotes: -1 })
-//       .limit(5);
+//     const hotQuestions = await Question.aggregate([
+//       {
+//         $project: {
+//           title: 1,
+//           views: 1,
+//           numberOfUpvotes: { $size: '$upvotes' },
+//         },
+//       },
+//       { $sort: { numberOfUpvotes: -1, views: -1 } },
+//       { $limit: 5 },
+//     ]);
 //     return hotQuestions;
 //   } catch (error) {
 //     console.log(error);
 //   }
 // }
+export async function getHotQuestions() {
+  try {
+    await connectToDatabase();
+    const hotQuestions = await Question.find({})
+      .sort({ views: -1, upvotes: -1 })
+      .limit(5);
+    return hotQuestions;
+  } catch (error) {
+    console.log(error);
+  }
+}

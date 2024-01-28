@@ -78,7 +78,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
   try {
     await connectToDatabase();
     // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
     const query: FilterQuery<typeof User> = {};
     if (searchQuery) {
       query.$or = [
@@ -88,7 +88,26 @@ export async function getAllUsers(params: GetAllUsersParams) {
         { username: { $regex: new RegExp(searchQuery, 'i') } },
       ];
     }
-    const users: IUser[] = await User.find(query).sort({ joinedAt: -1 });
+
+    let sortOptions = {};
+    switch (filter) {
+      case 'new_users':
+        sortOptions = { joinedAt: -1 };
+        break;
+      case 'old_users':
+        sortOptions = { joinedAt: 1 };
+        break;
+      case 'top_contributers':
+        sortOptions = { reputation: -1 };
+        break;
+
+      default:
+        break;
+    }
+
+    const users: IUser[] = await User.find(query)
+      .sort({ joinedAt: -1 })
+      .sort(sortOptions);
     console.log({ users });
     return { users };
   } catch (error: any) {
@@ -146,6 +165,31 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
         },
       ];
     }
+
+    let sortOptions = {};
+    switch (filter) {
+      case 'most_recent':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'oldest':
+        sortOptions = { createdAt: 1 };
+
+        break;
+      case 'most_voted':
+        sortOptions = { upvotes: -1 };
+
+        break;
+      case 'most_viewed':
+        sortOptions = { views: -1 };
+
+        break;
+      case 'most_answered':
+        sortOptions = { answers: -1 };
+        break;
+      default:
+        break;
+    }
+
     const user = await User.findOne({
       clerkId,
     }).populate({
@@ -153,9 +197,7 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
       model: Question,
       match: query,
       options: {
-        sort: {
-          createdAt: -1,
-        },
+        sort: sortOptions,
       },
       populate: [
         {
