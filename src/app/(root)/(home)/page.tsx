@@ -10,9 +10,12 @@ import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-export default async function Home({ searchParams: { q } }: SearchParamsProps) {
+export default async function Home({
+  searchParams: { q, filter },
+}: SearchParamsProps) {
   const result = await getQuestions({
     searchQuery: q,
+    filter,
   });
 
   return (
