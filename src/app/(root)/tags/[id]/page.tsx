@@ -21,7 +21,7 @@ const TagDetailPage = async ({ params: { id }, searchParams }: URLProps) => {
       <h1 className='h1-bold text-dark100_light900'>{result.tagTitle}</h1>
       <div className='mt-11 w-full'>
         <LocalSearch
-          route='/'
+          route={`/tags/${id}`}
           iconPosition='left'
           imgSrc='/assets/icons/search.svg'
           placeholcer='Search tag Questions'

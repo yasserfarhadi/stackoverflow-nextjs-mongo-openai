@@ -1,6 +1,5 @@
 'use server';
-
-import type { FilterQuery } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import Tag, { ITag } from '@/database/tag.model';
 import { connectToDatabase } from '../mongoose';
 // import User from '@/database/user.model';
@@ -49,8 +48,18 @@ export async function getAllTags(params: GetAllTagsParams) {
     await connectToDatabase();
 
     // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const { searchQuery } = params;
 
-    const tags: ITag[] = await Tag.find({}).sort({ createdAt: -1 });
+    const query: FilterQuery<typeof Tag> = {};
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, 'i') },
+        },
+      ];
+    }
+
+    const tags: ITag[] = await Tag.find(query).sort({ createdAt: -1 });
 
     return { tags };
   } catch (error: any) {

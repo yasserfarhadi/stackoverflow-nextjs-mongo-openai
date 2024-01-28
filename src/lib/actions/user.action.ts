@@ -74,11 +74,22 @@ export async function deleteUser(params: DeleteUserParams) {
   }
 }
 
-export async function getAllUsers(patams: GetAllUsersParams) {
+export async function getAllUsers(params: GetAllUsersParams) {
   try {
     await connectToDatabase();
     // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const users: IUser[] = await User.find({}).sort({ joinedAt: -1 });
+    const { searchQuery } = params;
+    const query: FilterQuery<typeof User> = {};
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, 'i') },
+        },
+        { username: { $regex: new RegExp(searchQuery, 'i') } },
+      ];
+    }
+    const users: IUser[] = await User.find(query).sort({ joinedAt: -1 });
+    console.log({ users });
     return { users };
   } catch (error: any) {
     console.log(error);
@@ -123,9 +134,18 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
     await connectToDatabase();
     // eslint-disable-next-line no-unused-vars
     const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
-    const query: FilterQuery<typeof Question> = searchQuery
-      ? { title: { $regex: new RegExp(searchQuery, 'i') } }
-      : {};
+    const query: FilterQuery<typeof Question> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        {
+          title: { $regex: new RegExp(searchQuery, 'i') },
+        },
+        {
+          content: { $regex: new RegExp(searchQuery, 'i') },
+        },
+      ];
+    }
     const user = await User.findOne({
       clerkId,
     }).populate({
