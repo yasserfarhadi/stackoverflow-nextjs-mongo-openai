@@ -230,33 +230,33 @@ export async function editQuestion(params: EditQuestionParams) {
   }
 }
 
-export async function getHotQuestions() {
-  try {
-    await connectToDatabase();
-    const hotQuestions = await Question.aggregate([
-      {
-        $project: {
-          title: 1,
-          views: 1,
-          numberOfUpvotes: { $size: '$upvotes' },
-        },
-      },
-      { $sort: { numberOfUpvotes: -1, views: -1 } },
-      { $limit: 5 },
-    ]);
-    return hotQuestions;
-  } catch (error) {
-    console.log(error);
-  }
-}
 // export async function getHotQuestions() {
 //   try {
 //     await connectToDatabase();
-//     const hotQuestions = await Question.find({})
-//       .sort({ views: -1, upvotes: -1 })
-//       .limit(5);
+//     const hotQuestions = await Question.aggregate([
+//       {
+//         $project: {
+//           title: 1,
+//           views: 1,
+//           numberOfUpvotes: { $size: '$upvotes' },
+//         },
+//       },
+//       { $sort: { numberOfUpvotes: -1, views: -1 } },
+//       { $limit: 5 },
+//     ]);
 //     return hotQuestions;
 //   } catch (error) {
 //     console.log(error);
 //   }
 // }
+export async function getHotQuestions() {
+  try {
+    await connectToDatabase();
+    const hotQuestions = await Question.find({})
+      .sort({ views: -1, upvotes: -1 })
+      .limit(5);
+    return hotQuestions;
+  } catch (error) {
+    console.log(error);
+  }
+}

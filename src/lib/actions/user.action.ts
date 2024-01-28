@@ -165,6 +165,31 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
         },
       ];
     }
+
+    let sortOptions = {};
+    switch (filter) {
+      case 'most_recent':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'oldest':
+        sortOptions = { createdAt: 1 };
+
+        break;
+      case 'most_voted':
+        sortOptions = { upvotes: -1 };
+
+        break;
+      case 'most_viewed':
+        sortOptions = { views: -1 };
+
+        break;
+      case 'most_answered':
+        sortOptions = { answers: -1 };
+        break;
+      default:
+        break;
+    }
+
     const user = await User.findOne({
       clerkId,
     }).populate({
@@ -172,9 +197,7 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
       model: Question,
       match: query,
       options: {
-        sort: {
-          createdAt: -1,
-        },
+        sort: sortOptions,
       },
       populate: [
         {

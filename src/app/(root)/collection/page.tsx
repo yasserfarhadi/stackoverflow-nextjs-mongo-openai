@@ -10,11 +10,15 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 export default async function CollectionPage({
-  searchParams: { q },
+  searchParams: { q, filter },
 }: SearchParamsProps) {
   const { userId } = auth();
   if (!userId) redirect('/login');
-  const result = await getSavedQuestion({ clerkId: userId, searchQuery: q });
+  const result = await getSavedQuestion({
+    clerkId: userId,
+    searchQuery: q,
+    filter,
+  });
 
   return (
     <>
