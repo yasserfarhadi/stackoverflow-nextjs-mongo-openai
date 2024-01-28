@@ -3,11 +3,12 @@ import Filter from '@/components/shared/Filter';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { UserFilters } from '@/constants/filters';
 import { getAllUsers } from '@/lib/actions/user.action';
+import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-const CommunityPage = async () => {
-  const results = await getAllUsers({});
+const CommunityPage = async ({ searchParams: { q } }: SearchParamsProps) => {
+  const results = await getAllUsers({ searchQuery: q });
 
   return (
     <>
@@ -30,10 +31,12 @@ const CommunityPage = async () => {
           results.users.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
           <div className='paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center'>
-            <p>No users yet</p>
-            <Link href='/sign-up' className='mt-2 font-bold text-accent-blue'>
-              Join to be the first
-            </Link>
+            <p>No users {q ? 'found' : 'yet'}</p>
+            {!q && (
+              <Link href='/sign-up' className='mt-2 font-bold text-accent-blue'>
+                Join to be the first
+              </Link>
+            )}
           </div>
         )}
       </section>

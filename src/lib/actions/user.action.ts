@@ -74,11 +74,22 @@ export async function deleteUser(params: DeleteUserParams) {
   }
 }
 
-export async function getAllUsers(patams: GetAllUsersParams) {
+export async function getAllUsers(params: GetAllUsersParams) {
   try {
     await connectToDatabase();
     // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const users: IUser[] = await User.find({}).sort({ joinedAt: -1 });
+    const { searchQuery } = params;
+    const query: FilterQuery<typeof User> = {};
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, 'i') },
+        },
+        { username: { $regex: new RegExp(searchQuery, 'i') } },
+      ];
+    }
+    const users: IUser[] = await User.find(query).sort({ joinedAt: -1 });
+    console.log({ users });
     return { users };
   } catch (error: any) {
     console.log(error);
