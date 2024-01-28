@@ -7,8 +7,8 @@ import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-const TagsPage = async ({ searchParams: { q } }: SearchParamsProps) => {
-  const results = await getAllTags({ searchQuery: q });
+const TagsPage = async ({ searchParams: { q, filter } }: SearchParamsProps) => {
+  const results = await getAllTags({ searchQuery: q, filter });
 
   return (
     <>

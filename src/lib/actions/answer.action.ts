@@ -43,14 +43,33 @@ export interface PopulatedAnswers extends Omit<IAnswer, 'author'> {
 export async function getAnswers(params: GetAnswersParams) {
   try {
     await connectToDatabase();
-    const { questionId } = params;
+    const { questionId, sortBy } = params;
+
+    let sortOptions = {};
+    switch (sortBy) {
+      case 'highestUpvotes':
+        sortOptions = { upvotes: -1 };
+        break;
+      case 'lowestUpvotes':
+        sortOptions = { upvotes: 1 };
+        break;
+      case 'recent':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'old':
+        sortOptions = { createdAt: 1 };
+        break;
+      default:
+        break;
+    }
+
     const answers = (await Answer.find({ question: questionId })
       .populate({
         path: 'author',
         model: User,
         select: '_id clerkId name picture',
       })
-      .sort({ createdAt: -1 })) as PopulatedAnswers[];
+      .sort(sortOptions)) as PopulatedAnswers[];
 
     return { answers };
   } catch (error) {

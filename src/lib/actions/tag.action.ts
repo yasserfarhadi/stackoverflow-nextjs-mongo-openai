@@ -48,7 +48,7 @@ export async function getAllTags(params: GetAllTagsParams) {
     await connectToDatabase();
 
     // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
 
     const query: FilterQuery<typeof Tag> = {};
     if (searchQuery) {
@@ -59,7 +59,26 @@ export async function getAllTags(params: GetAllTagsParams) {
       ];
     }
 
-    const tags: ITag[] = await Tag.find(query).sort({ createdAt: -1 });
+    let sortOptions = {};
+    switch (filter) {
+      case 'popular':
+        sortOptions = { questions: -1 };
+
+        break;
+      case 'recent':
+        sortOptions = { createdOn: -1 };
+        break;
+      case 'name':
+        sortOptions = { name: 1 };
+        break;
+      case 'old':
+        sortOptions = { createdOn: 1 };
+        break;
+      default:
+        break;
+    }
+
+    const tags: ITag[] = await Tag.find(query).sort(sortOptions);
 
     return { tags };
   } catch (error: any) {

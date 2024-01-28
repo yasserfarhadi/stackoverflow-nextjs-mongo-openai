@@ -8,24 +8,27 @@ import { getAnswers } from '@/lib/actions/answer.action';
 import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { formatAndDevideNumbers, getTimestamp } from '@/lib/utils';
+import { URLProps } from '@/types';
 import { auth } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
-const QuestionDetailsPage = async ({ params }: { params: { id: string } }) => {
+const QuestionDetailsPage = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
   const question = await getQuestionById({ questionId: params.id });
   if (!question) notFound();
-  const answersResult = await getAnswers({ questionId: question._id });
+  const answersResult = await getAnswers({
+    questionId: question._id,
+    sortBy: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
 
   let mongoUser;
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
-
-  console.log(mongoUser);
 
   return (
     <>
