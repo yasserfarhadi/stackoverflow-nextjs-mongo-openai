@@ -12,7 +12,7 @@ interface Props extends SearchParamsProps {
 const QuestionTab = async ({ searchParams, userId, clerkId }: Props) => {
   const results = await getUserQuestions({
     userId,
-    page: searchParams.page ? +searchParams.page : 1,
+    page: searchParams.questionsPage ? +searchParams.questionsPage : 1,
     pageSize: 2,
   });
   return (
@@ -32,8 +32,12 @@ const QuestionTab = async ({ searchParams, userId, clerkId }: Props) => {
         />
       ))}
       <Pagination
-        pageNumber={searchParams.page ? +searchParams.page : 1}
+        pageNumber={
+          searchParams.questionsPage ? +searchParams.questionsPage : 1
+        }
         isNext={!!results?.isNext}
+        key='question'
+        urlKey='questionsPage'
       />
     </div>
   );

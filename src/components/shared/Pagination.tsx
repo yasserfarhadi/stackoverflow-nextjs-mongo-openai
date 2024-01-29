@@ -8,11 +8,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 interface Props {
   pageNumber: number;
   isNext: boolean;
+  urlKey?: string;
 }
 
-const Pagination = ({ pageNumber, isNext }: Props) => {
+const Pagination = ({ pageNumber, isNext, urlKey }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const handleNavigation = React.useCallback(
     (direction: 'prev' | 'next') => {
       const nextPageNumber =
@@ -20,15 +22,14 @@ const Pagination = ({ pageNumber, isNext }: Props) => {
 
       const newUrl = formUrlQuery({
         params: searchParams.toString(),
-        key: 'page',
+        key: urlKey || 'page',
         value: nextPageNumber.toString(),
       });
 
       router.push(newUrl);
     },
-    [pageNumber, router, searchParams],
+    [pageNumber, router, searchParams, urlKey],
   );
-  console.log({ show: !isNext && pageNumber === 1 });
   if (!isNext && pageNumber === 1) return null;
 
   return (

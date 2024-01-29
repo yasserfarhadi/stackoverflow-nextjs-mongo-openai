@@ -2,6 +2,7 @@ import { getUserAnsewrs } from '@/lib/actions/user.action';
 import { SearchParamsProps } from '@/types';
 import React from 'react';
 import AnswerCard from '../cards/AnswerCard';
+import Pagination from './Pagination';
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -9,7 +10,11 @@ interface Props extends SearchParamsProps {
 }
 
 const AnswerTab = async ({ searchParams, userId, clerkId }: Props) => {
-  const results = await getUserAnsewrs({ userId, page: 1 });
+  const results = await getUserAnsewrs({
+    userId,
+    page: searchParams.answersPage ? +searchParams.answersPage : 1,
+    pageSize: 2,
+  });
 
   return (
     <>
@@ -24,6 +29,12 @@ const AnswerTab = async ({ searchParams, userId, clerkId }: Props) => {
           createdAt={answer.createdAt}
         />
       ))}
+      <Pagination
+        pageNumber={searchParams.answersPage ? +searchParams.answersPage : 1}
+        isNext={!!results?.isNext}
+        key='answer'
+        urlKey='answersPage'
+      />
     </>
   );
 };
