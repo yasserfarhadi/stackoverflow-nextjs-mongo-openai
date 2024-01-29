@@ -48,9 +48,7 @@ const CommunityPage = async ({
           </div>
         )}
       </section>
-      <div className='mt-10'>
-        <Pagination pageNumber={page ? +page : 1} isNext={!!results?.isNext} />
-      </div>
+      <Pagination pageNumber={page ? +page : 1} isNext={!!results?.isNext} />
     </>
   );
 };

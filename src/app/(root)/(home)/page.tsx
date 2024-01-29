@@ -71,9 +71,7 @@ export default async function Home({
           />
         )}
       </div>
-      <div className='mt-10'>
-        <Pagination pageNumber={page ? +page : 1} isNext={!!result?.isNext} />
-      </div>
+      <Pagination pageNumber={page ? +page : 1} isNext={!!result?.isNext} />
     </>
   );
 }
