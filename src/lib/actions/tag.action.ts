@@ -47,8 +47,8 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     await connectToDatabase();
 
-    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const { searchQuery, filter } = params;
+    const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Tag> = {};
     if (searchQuery) {
@@ -78,9 +78,14 @@ export async function getAllTags(params: GetAllTagsParams) {
         break;
     }
 
-    const tags: ITag[] = await Tag.find(query).sort(sortOptions);
+    const tags: ITag[] = await Tag.find(query)
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOptions);
+    const totalTags = await Tag.countDocuments(query);
+    const isNext = totalTags > skipAmount + pageSize;
 
-    return { tags };
+    return { tags, isNext };
   } catch (error: any) {
     console.log(error);
   }
