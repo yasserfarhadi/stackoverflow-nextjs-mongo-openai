@@ -77,8 +77,9 @@ export async function deleteUser(params: DeleteUserParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     await connectToDatabase();
-    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
-    const { searchQuery, filter } = params;
+    const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const skipAmout = (page - 1) * pageSize;
+
     const query: FilterQuery<typeof User> = {};
     if (searchQuery) {
       query.$or = [
@@ -106,10 +107,15 @@ export async function getAllUsers(params: GetAllUsersParams) {
     }
 
     const users: IUser[] = await User.find(query)
+      .skip(skipAmout)
+      .limit(pageSize)
       .sort({ joinedAt: -1 })
       .sort(sortOptions);
-    console.log({ users });
-    return { users };
+
+    const totalUsers = await User.countDocuments(query);
+    const isNext = totalUsers > skipAmout + users.length;
+
+    return { users, isNext };
   } catch (error: any) {
     console.log(error);
   }
