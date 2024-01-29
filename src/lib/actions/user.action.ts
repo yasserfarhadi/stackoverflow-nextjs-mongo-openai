@@ -159,6 +159,7 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
     await connectToDatabase();
     // eslint-disable-next-line no-unused-vars
     const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
+    const skipAmount = (page - 1) * pageSize;
     const query: FilterQuery<typeof Question> = {};
 
     if (searchQuery) {
@@ -195,15 +196,19 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
       default:
         break;
     }
-
     const user = await User.findOne({
       clerkId,
-    }).populate({
+    });
+    const totalQuestions = user.saved.length;
+
+    await user.populate({
       path: 'saved',
       model: Question,
       match: query,
       options: {
         sort: sortOptions,
+        skip: skipAmount,
+        limit: pageSize,
       },
       populate: [
         {
@@ -221,7 +226,11 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
     if (!user) throw new Error('User not found.');
 
     const savedQuestions = user.saved;
-    return { questions: savedQuestions };
+
+    console.log({ savedQuestions });
+    const isNext = totalQuestions > skipAmount + pageSize;
+
+    return { questions: savedQuestions, isNext };
   } catch (error: any) {
     console.log(error);
   }

@@ -28,7 +28,7 @@ const Pagination = ({ pageNumber, isNext }: Props) => {
     },
     [pageNumber, router, searchParams],
   );
-
+  console.log({ show: !isNext && pageNumber === 1 });
   if (!isNext && pageNumber === 1) return null;
 
   return (
