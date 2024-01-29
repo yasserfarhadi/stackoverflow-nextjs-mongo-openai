@@ -17,6 +17,8 @@ export default async function Home({
   const result = await getQuestions({
     searchQuery: q,
     filter,
+    page: page ? +page : 1,
+    pageSize: 2,
   });
 
   return (
@@ -70,11 +72,7 @@ export default async function Home({
         )}
       </div>
       <div className='mt-10'>
-        <Pagination
-          pageNumber={page ? +page : 1}
-          // isNext={result?.isNext}
-          isNext={false}
-        />
+        <Pagination pageNumber={page ? +page : 1} isNext={result?.isNext} />
       </div>
     </>
   );
