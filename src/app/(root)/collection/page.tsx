@@ -1,6 +1,7 @@
 import QuestionCard from '@/components/cards/QuestionCard';
 import Filter from '@/components/shared/Filter';
 import NoResult from '@/components/shared/NoResult';
+import Pagination from '@/components/shared/Pagination';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { QuestionFilters } from '@/constants/filters';
 import { getSavedQuestion } from '@/lib/actions/user.action';
@@ -10,7 +11,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 export default async function CollectionPage({
-  searchParams: { q, filter },
+  searchParams: { q, filter, page },
 }: SearchParamsProps) {
   const { userId } = auth();
   if (!userId) redirect('/login');
@@ -18,6 +19,8 @@ export default async function CollectionPage({
     clerkId: userId,
     searchQuery: q,
     filter,
+    page: page ? +page : 1,
+    pageSize: 2,
   });
 
   return (
@@ -61,6 +64,7 @@ export default async function CollectionPage({
           />
         )}
       </div>
+      <Pagination pageNumber={page ? +page : 1} isNext={!!result?.isNext} />
     </>
   );
 }

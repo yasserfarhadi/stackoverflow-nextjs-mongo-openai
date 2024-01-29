@@ -1,6 +1,7 @@
 import Answer from '@/components/forms/Answer';
 import AllAnswers from '@/components/shared/AllAnswers';
 import Metric from '@/components/shared/Metric';
+import Pagination from '@/components/shared/Pagination';
 import ParseHTML from '@/components/shared/ParseHTML';
 import RenderTag from '@/components/shared/RenderTag';
 import Votes from '@/components/shared/Votes';
@@ -23,6 +24,7 @@ const QuestionDetailsPage = async ({ params, searchParams }: URLProps) => {
     questionId: question._id,
     sortBy: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
+    pageSize: 2,
   });
 
   let mongoUser;
@@ -106,6 +108,11 @@ const QuestionDetailsPage = async ({ params, searchParams }: URLProps) => {
         userId={JSON.stringify(mongoUser._id)}
         totalAnswers={answersResult?.answers.length || 0}
         answers={answersResult?.answers || []}
+      />
+
+      <Pagination
+        pageNumber={searchParams.page ? +searchParams.page : 1}
+        isNext={!!answersResult?.isNext}
       />
 
       <Answer
