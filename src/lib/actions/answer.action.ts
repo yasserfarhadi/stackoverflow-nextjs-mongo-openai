@@ -43,7 +43,8 @@ export interface PopulatedAnswers extends Omit<IAnswer, 'author'> {
 export async function getAnswers(params: GetAnswersParams) {
   try {
     await connectToDatabase();
-    const { questionId, sortBy } = params;
+    const { questionId, sortBy, page = 1, pageSize = 10 } = params;
+    const skipAmout = (page - 1) * pageSize;
 
     let sortOptions = {};
     switch (sortBy) {
@@ -64,6 +65,8 @@ export async function getAnswers(params: GetAnswersParams) {
     }
 
     const answers = (await Answer.find({ question: questionId })
+      .skip(skipAmout)
+      .limit(pageSize)
       .populate({
         path: 'author',
         model: User,
@@ -71,7 +74,10 @@ export async function getAnswers(params: GetAnswersParams) {
       })
       .sort(sortOptions)) as PopulatedAnswers[];
 
-    return { answers };
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+    const isNext = totalAnswers > skipAmout + pageSize;
+
+    return { answers, isNext };
   } catch (error) {
     console.log(error);
   }
