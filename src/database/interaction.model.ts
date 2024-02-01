@@ -14,7 +14,6 @@ const InteractionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true,
   },
   action: { type: String, required: true },
   question: { type: Schema.Types.ObjectId, ref: 'Question' },

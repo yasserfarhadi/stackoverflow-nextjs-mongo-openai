@@ -108,8 +108,21 @@ export async function createQuestion(params: CreateQuestionParams) {
       $push: { tags: { $each: tagDocuments } },
     });
 
+    await Interaction.create({
+      user: author,
+      action: 'ask-question',
+      question: question._id,
+      tags: tagDocuments,
+    });
+
+    await User.findByIdAndUpdate(author, {
+      $inc: { reputation: 5 },
+    });
+
     revalidatePath(path);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 interface PopulatedQuestion extends Omit<IQuestion, 'tags' | 'author'> {
@@ -163,7 +176,14 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     });
 
     if (!question) throw new Error('Question not found');
-    // TODO: Increment author's reputation by +10 for upvoting a question
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -1 : 1 },
+    });
+
+    await User.findOneAndUpdate(question.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error: any) {
@@ -192,7 +212,13 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     });
 
     if (!question) throw new Error('Question not found');
-    // TODO: Increment author's reputation by +10 for upvoting a question
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? 1 : -1 },
+    });
+
+    await User.findOneAndUpdate(question.author, {
+      $inc: { reputation: hasdownVoted ? 10 : -10 },
+    });
 
     revalidatePath(path);
   } catch (error: any) {
@@ -238,25 +264,6 @@ export async function editQuestion(params: EditQuestionParams) {
   }
 }
 
-// export async function getHotQuestions() {
-//   try {
-//     await connectToDatabase();
-//     const hotQuestions = await Question.aggregate([
-//       {
-//         $project: {
-//           title: 1,
-//           views: 1,
-//           numberOfUpvotes: { $size: '$upvotes' },
-//         },
-//       },
-//       { $sort: { numberOfUpvotes: -1, views: -1 } },
-//       { $limit: 5 },
-//     ]);
-//     return hotQuestions;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 export async function getHotQuestions() {
   try {
     await connectToDatabase();

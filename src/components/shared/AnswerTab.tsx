@@ -13,7 +13,7 @@ const AnswerTab = async ({ searchParams, userId, clerkId }: Props) => {
   const results = await getUserAnsewrs({
     userId,
     page: searchParams.answersPage ? +searchParams.answersPage : 1,
-    pageSize: 2,
+    pageSize: 10,
   });
 
   return (

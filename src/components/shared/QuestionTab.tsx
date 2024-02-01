@@ -13,7 +13,7 @@ const QuestionTab = async ({ searchParams, userId, clerkId }: Props) => {
   const results = await getUserQuestions({
     userId,
     page: searchParams.questionsPage ? +searchParams.questionsPage : 1,
-    pageSize: 2,
+    pageSize: 10,
   });
   return (
     <div className='flex flex-col gap-6'>

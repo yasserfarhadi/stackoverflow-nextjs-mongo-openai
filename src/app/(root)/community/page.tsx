@@ -15,7 +15,7 @@ const CommunityPage = async ({
     searchQuery: q,
     filter,
     page: page ? +page : 1,
-    pageSize: 1,
+    pageSize: 10,
   });
 
   return (
