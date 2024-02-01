@@ -10,7 +10,9 @@ const HomeFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   // const pathname = usePathname();
-  const [active, setActive] = React.useState('');
+  const [active, setActive] = React.useState(
+    () => searchParams.get('filter') || '',
+  );
 
   const changeHandler = React.useCallback(
     (item: string) => () => {

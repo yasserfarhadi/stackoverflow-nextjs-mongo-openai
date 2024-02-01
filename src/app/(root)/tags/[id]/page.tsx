@@ -12,7 +12,7 @@ const TagDetailPage = async ({ params: { id }, searchParams }: URLProps) => {
     tagId: id,
     searchQuery: searchParams.q,
     page: searchParams.page ? +searchParams.page : 1,
-    pageSize: 1,
+    pageSize: 10,
   });
 
   if (!result) notFound();

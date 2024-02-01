@@ -20,7 +20,7 @@ export default async function CollectionPage({
     searchQuery: q,
     filter,
     page: page ? +page : 1,
-    pageSize: 2,
+    pageSize: 10,
   });
 
   return (
