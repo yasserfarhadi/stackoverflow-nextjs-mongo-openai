@@ -17,6 +17,7 @@ const ProfilePage = async ({ params: { id }, searchParams }: URLProps) => {
   const userInfo = await getUserInfo({ userId: id });
   if (!userInfo) notFound();
   const { userId: clerkId } = auth();
+
   return (
     <>
       <div className='flex flex-col-reverse items-start justify-between sm:flex-row'>

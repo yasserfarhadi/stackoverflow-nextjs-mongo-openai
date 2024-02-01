@@ -229,7 +229,6 @@ export async function getSavedQuestion(params: GetSavedQuestionsParams) {
 
     const savedQuestions = user.saved;
 
-    console.log({ savedQuestions });
     const isNext = totalQuestions > skipAmount + pageSize;
 
     return { questions: savedQuestions, isNext };
