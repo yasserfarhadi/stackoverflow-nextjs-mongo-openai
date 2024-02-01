@@ -16,6 +16,7 @@ const GlobalSearch = () => {
   const [search, setSearch] = React.useState('');
   const [isOpen, setIsOpen] = React.useState(false);
   const searchRef = React.useRef<HTMLDivElement | null>(null);
+  const lastPathnameRef = React.useRef<string>(pathname);
   useOnClickOutside(searchRef, (event) => {
     setIsOpen(false);
   });
@@ -42,6 +43,13 @@ const GlobalSearch = () => {
 
     return () => clearTimeout(timer);
   }, [search, router, searchParams, query, pathname]);
+
+  React.useEffect(() => {
+    if (lastPathnameRef.current !== pathname && isOpen) {
+      setIsOpen(false);
+      lastPathnameRef.current = pathname;
+    }
+  }, [isOpen, pathname]);
 
   return (
     <div

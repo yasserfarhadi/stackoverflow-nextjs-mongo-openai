@@ -6,55 +6,51 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import GlobalFilters from './GlobalFilters';
+import { SearchType, globalSearch } from '@/lib/actions/general.action';
 
-const createLink = (
-  type: 'question' | 'answer' | 'user' | 'tag',
-  id: string,
-) => {
-  return '/';
+const createLink = (type: SearchType, id: string) => {
+  switch (type) {
+    case 'question':
+      return `/question/${id}`;
+    case 'answer':
+      return `/question/${id}`;
+    case 'tag':
+      return `/tags/${id}`;
+    case 'user':
+      return `/profile/${id}`;
+
+    default:
+      return '/';
+  }
 };
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [result, setResult] = React.useState([
-    {
-      type: 'question',
-      id: '1',
-      title: 'Next js Question',
-    },
-    {
-      type: 'answer',
-      id: '2',
-      title: 'Next js Answer',
-    },
-    {
-      type: 'Tag',
-      id: '3',
-      title: 'Next js Tag',
-    },
-    {
-      type: 'User',
-      id: '4',
-      title: 'Next js Developer',
-    },
-  ]);
+  const [result, setResult] = React.useState([]);
 
   const global = searchParams.get('global');
-  const type = searchParams.get('type');
+  const type = searchParams.get('type') as SearchType;
 
   React.useEffect(() => {
     const fetchResult = async () => {
       setIsLoading(true);
       try {
-        //
+        const res = await globalSearch({ query: global, type });
+        if (res) setResult(JSON.parse(res));
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     };
-  }, []);
+
+    if (global) {
+      fetchResult();
+    }
+  }, [global, type]);
+
+  console.log(result);
 
   return (
     <div className='absolute inset-x-0 top-full z-10 mt-3 w-full rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400'>
@@ -77,7 +73,7 @@ const GlobalResult = () => {
               result.map((item: any, index: number) => (
                 <Link
                   key={item.id}
-                  href={createLink('answer', item.id)}
+                  href={createLink(item.type, item.id)}
                   className='flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50'
                 >
                   <Image

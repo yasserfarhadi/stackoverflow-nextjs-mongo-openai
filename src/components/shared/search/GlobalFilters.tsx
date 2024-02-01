@@ -1,6 +1,7 @@
 'use client';
 
 import { GlobalSearchFilters } from '@/constants/filters';
+import { SearchType } from '@/lib/actions/general.action';
 import { formUrlQuery } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -13,7 +14,7 @@ const GlobalFilters = () => {
   console.log(active);
 
   const handleChangeType = React.useCallback(
-    (item: string) => () => {
+    (item: SearchType) => () => {
       if (active === item) {
         setActive('');
         const newUrl = formUrlQuery({
@@ -44,7 +45,7 @@ const GlobalFilters = () => {
             type='button'
             key={filter.value}
             className={`light-border-2 small-medium rounded-2xl px-5 py-2 capitalize dark:text-light-800 dark:hover:text-primary-500 ${active === filter.value ? 'bg-primary-500 text-light-900' : 'bg-light-700 text-dark-400 hover:text-primary-500 dark:bg-dark-500'}`}
-            onClick={handleChangeType(filter.value)}
+            onClick={handleChangeType(filter.value as SearchType)}
           >
             {filter.name}
           </button>
