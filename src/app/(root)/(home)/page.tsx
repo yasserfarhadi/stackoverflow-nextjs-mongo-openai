@@ -6,12 +6,17 @@ import Pagination from '@/components/shared/Pagination';
 import LocalSearch from '@/components/shared/search/LocalSearch';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
-import { getQuestions } from '@/lib/actions/question.action';
+import {
+  getQuestions,
+  getReccomendedQuestions,
+} from '@/lib/actions/question.action';
 import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
 import type { Metadata } from 'next';
+import { auth } from '@clerk/nextjs';
+import { toast } from '@/components/ui/use-toast';
 
 export const metadata: Metadata = {
   title: 'Home | BBK Overflow',
@@ -21,12 +26,34 @@ export const metadata: Metadata = {
 export default async function Home({
   searchParams: { q, filter, page },
 }: SearchParamsProps) {
-  const result = await getQuestions({
-    searchQuery: q,
-    filter,
-    page: page ? +page : 1,
-    pageSize: 10,
-  });
+  const { userId } = auth();
+  let result;
+  if (filter === 'recommended') {
+    if (userId) {
+      result = await getReccomendedQuestions({
+        userId,
+        searchQuery: q,
+        page: page ? +page : 1,
+        pageSize: 10,
+      });
+    } else {
+      result = {
+        questions: [],
+        isNext: false,
+      };
+      toast({
+        title: 'You have to log in for this action',
+      });
+    }
+  } else {
+    result = await getQuestions({
+      searchQuery: q,
+      filter,
+      page: page ? +page : 1,
+      pageSize: 10,
+    });
+  }
+
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
