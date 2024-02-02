@@ -11,6 +11,7 @@ import { formatAndDevideNumbers } from '@/lib/utils';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
+import { useToast } from '../ui/use-toast';
 
 interface Props {
   type: 'question' | 'answer';
@@ -36,6 +37,7 @@ const Votes = ({
   const pathname = usePathname();
 
   const router = useRouter();
+  const { toast } = useToast();
 
   React.useEffect(() => {
     viewQuestion({
@@ -50,10 +52,19 @@ const Votes = ({
       userId: JSON.parse(userId),
       path: pathname,
     });
+
+    toast({
+      title: `Question ${!hasSaved ? 'Saved in' : 'Removed'} from your collection`,
+      variant: !hasSaved ? 'default' : 'destructive',
+    });
   };
 
   const handleVote = async (action: 'upvote' | 'downvote') => {
-    if (!userId) return;
+    if (!userId)
+      return toast({
+        title: 'Please log in',
+        description: 'You must be logged in to perform this action.',
+      });
     if (action === 'upvote') {
       if (type === 'question') {
         await upvoteQuestion({
@@ -73,7 +84,10 @@ const Votes = ({
         });
       }
 
-      // TODO: show a toast.
+      toast({
+        title: `Upvote ${!hasupVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive',
+      });
     }
 
     if (action === 'downvote') {
@@ -94,7 +108,10 @@ const Votes = ({
           path: pathname,
         });
       }
-      // TODO: show a toast.
+      toast({
+        title: `Downvote ${!hasdownVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasdownVoted ? 'default' : 'destructive',
+      });
     }
   };
 
