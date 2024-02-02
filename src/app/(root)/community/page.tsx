@@ -8,6 +8,13 @@ import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Community | BBK Overflow',
+  description: 'BBK Overflow is a community of 1,600,000+ developers. Join us.',
+};
+
 const CommunityPage = async ({
   searchParams: { q, filter, page },
 }: SearchParamsProps) => {
